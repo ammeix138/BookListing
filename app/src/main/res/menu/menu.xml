@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".BookActivity">
+
+    <item
+        android:id="@+id/search_bar"
+        android:checkable="true"
+        android:enabled="true"
+        android:icon="@drawable/ic_search_white"
+        android:title="@string/search_app_home_screen"
+        android:visible="true"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+
+</menu>

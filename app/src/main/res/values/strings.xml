@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BookSearch</string>
+    <string name="search_app_home_screen">Search</string>
+</resources>
