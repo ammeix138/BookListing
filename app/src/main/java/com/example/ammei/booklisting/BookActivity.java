@@ -39,8 +39,8 @@ public class BookActivity extends AppCompatActivity {
      * URL to obtain book data from Google Books website
      */
     private static final String GOOGLE_BOOKS_URL =
-            "https://www.googleapis.com/books/v1/volumes?maxResults=2&q=books";
-    EditText mSearchTerm;
+            "https://www.googleapis.com/books/v1/volumes?q=";
+
     /**
      * Adapter for the list of books
      */
@@ -55,11 +55,11 @@ public class BookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
-        DownloadTask task = new DownloadTask();
+        final DownloadTask task = new DownloadTask();
         task.execute();
 
         // Find a reference to the {@link ListView} in the layout
-        ListView bookListView = (ListView) findViewById(R.id.list_item);
+        final ListView bookListView = (ListView) findViewById(R.id.list_item);
 
         mEmptyStateTextView = (TextView) findViewById(R.id.emptyView);
         bookListView.setEmptyView(mEmptyStateTextView);
@@ -70,11 +70,8 @@ public class BookActivity extends AppCompatActivity {
         // List that will be populated with the books searched
         bookListView.setAdapter(mAdapter);
 
-        EditText searchText = (EditText) findViewById(R.id.search_editText);
-        searchText.getText().toString();
-
-
-
+        final Button searchButton = (Button) findViewById(R.id.button);
+        searchButton.getText().toString();
 
         // Item click listener on the ListView, send an intent to a web browser
         // to open a website with more information about the searched book.
@@ -82,14 +79,18 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-                Button searchButton = (Button) findViewById(R.id.button);
-                searchButton.getText().toString();
+                EditText searchTerm = (EditText) findViewById(R.id.search_editText);
+                DownloadTask task = new DownloadTask();
+                task.execute(GOOGLE_BOOKS_URL + searchTerm);
 
 
                 // Find the current earthquake that was clicked on
                 Books currentBook = mAdapter.getItem(position);
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
-                Uri bookUri = Uri.parse(currentBook.getURL());
+                Uri bookUri = null;
+                if (currentBook != null) {
+                    bookUri = Uri.parse(currentBook.getURL());
+                }
                 // Create a new intent to view the book URI
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, bookUri);
                 // Send the intent to launch a new activity
@@ -98,6 +99,7 @@ public class BookActivity extends AppCompatActivity {
         });
 
     }
+
 
     private void updateUi(List<Books> books) {
         //Display the Book Title within the UI
