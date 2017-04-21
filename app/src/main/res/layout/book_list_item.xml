@@ -9,19 +9,7 @@
     android:orientation="vertical"
     tools:context="com.example.ammei.booklisting.BookActivity">
 
-    <EditText
-        android:id="@+id/search_editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search..."
-        android:imeOptions="flagNoExtractUi"
-        android:maxLines="1" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search" />
 
     <RelativeLayout
         android:layout_width="match_parent"

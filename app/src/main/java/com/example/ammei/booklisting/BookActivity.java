@@ -11,6 +11,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,8 +39,8 @@ public class BookActivity extends AppCompatActivity {
      * URL to obtain book data from Google Books website
      */
     private static final String GOOGLE_BOOKS_URL =
-            "https://www.googleapis.com/books/v1/volumes?q=null&maxResults=2";
-
+            "https://www.googleapis.com/books/v1/volumes?maxResults=2&q=books";
+    EditText mSearchTerm;
     /**
      * Adapter for the list of books
      */
@@ -56,7 +58,6 @@ public class BookActivity extends AppCompatActivity {
         DownloadTask task = new DownloadTask();
         task.execute();
 
-
         // Find a reference to the {@link ListView} in the layout
         ListView bookListView = (ListView) findViewById(R.id.list_item);
 
@@ -69,20 +70,28 @@ public class BookActivity extends AppCompatActivity {
         // List that will be populated with the books searched
         bookListView.setAdapter(mAdapter);
 
+        EditText searchText = (EditText) findViewById(R.id.search_editText);
+        searchText.getText().toString();
+
+
+
+
         // Item click listener on the ListView, send an intent to a web browser
         // to open a website with more information about the searched book.
         bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+                Button searchButton = (Button) findViewById(R.id.button);
+                searchButton.getText().toString();
+
+
                 // Find the current earthquake that was clicked on
                 Books currentBook = mAdapter.getItem(position);
-
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
                 Uri bookUri = Uri.parse(currentBook.getURL());
-
                 // Create a new intent to view the book URI
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, bookUri);
-
                 // Send the intent to launch a new activity
                 startActivity(websiteIntent);
             }
@@ -90,25 +99,18 @@ public class BookActivity extends AppCompatActivity {
 
     }
 
-    private void updateUi (Books books){
+    private void updateUi(List<Books> books) {
         //Display the Book Title within the UI
-        TextView titleTextView = (TextView) findViewById(R.id.bookTitle);
-        titleTextView.setText(books.getTitle());
-
-        //Display the name of the Author for the searched book
-        TextView authorTextView = (TextView) findViewById(R.id.author);
-        authorTextView.setText(books.getAuthor());
-
-        //Display the description of the searched book
-        TextView descriptionTextView = (TextView) findViewById(R.id.description);
-        descriptionTextView.setText(books.getDescription());
+        mAdapter.clear();
+        mAdapter.addAll(books);
+        mAdapter.notifyDataSetChanged();
     }
 
-    private class DownloadTask extends AsyncTask<URL, Void, Books> {
+    private class DownloadTask extends AsyncTask<String, Void, List<Books>> {
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        protected Books doInBackground(URL... urls) {
+        protected List<Books> doInBackground(String... urls) {
 
             URL url = createUrl(GOOGLE_BOOKS_URL);
 
@@ -121,8 +123,7 @@ public class BookActivity extends AppCompatActivity {
                 Log.e(LOG_TAG, "There was a problem retrieving the search query", e);
             }
 
-            Books books = (Books) extractFeatureFromJson(jsonResponse);
-            //TODO: Initiate the HttpRequestMethod in your doInBackground method.
+            List<Books> books = extractFeatureFromJson(jsonResponse);
 
             return books;
         }
@@ -130,9 +131,8 @@ public class BookActivity extends AppCompatActivity {
         /*
          *Updates the screen with a new list of searched books
          */
-        //TODO: Finish implementing @Override onPostExecute.
         @Override
-        protected void onPostExecute(Books books) {
+        protected void onPostExecute(List<Books> books) {
             if (books == null){
                 return;
             }
@@ -141,7 +141,7 @@ public class BookActivity extends AppCompatActivity {
         }
 
         private URL createUrl(String stringUrl) {
-            URL url = null;
+            URL url;
 
             try {
                 url = new URL(stringUrl);
@@ -213,9 +213,8 @@ public class BookActivity extends AppCompatActivity {
             try {
 
                 JSONObject baseJsonResponse = new JSONObject(googleBookJSON);
-                JSONArray arrayItems = baseJsonResponse.getJSONArray("items");
+                JSONArray bookArray = baseJsonResponse.getJSONArray("items");
 
-                JSONArray bookArray = new JSONArray(arrayItems);
 
                 for (int i = 0; i < bookArray.length(); i++) {
                     JSONObject currentBook = bookArray.getJSONObject(i);
@@ -226,7 +225,7 @@ public class BookActivity extends AppCompatActivity {
                     String authors = volumeInfo.getString("authors");
                     String description = volumeInfo.getString("description");
                     // Extract the value for the key called "url"
-                    String url = volumeInfo.getString("url");
+                    String url = volumeInfo.getString("previewLink");
 
                     //Create a new object
                     Books booksList = new Books(title, authors, description, url);
