@@ -57,9 +57,6 @@ public class BookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
-        final DownloadTask task = new DownloadTask();
-        task.execute();
-
         // Find a reference to the {@link ListView} in the layout
         final ListView bookListView = (ListView) findViewById(R.id.list_item);
 
@@ -73,11 +70,18 @@ public class BookActivity extends AppCompatActivity {
         bookListView.setAdapter(mAdapter);
 
 
+        final EditText searchTermView = (EditText) findViewById(R.id.search_editText);
         final Button searchButton = (Button) findViewById(R.id.button);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                String searchTerm = searchTermView.getText().toString();
+                String searchUrl = GOOGLE_BOOKS_URL + searchTerm;
+
+                DownloadTask task = new DownloadTask();
+                task.execute(searchUrl);
 
 
             }
