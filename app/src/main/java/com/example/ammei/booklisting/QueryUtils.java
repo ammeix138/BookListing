@@ -63,23 +63,30 @@ public final class QueryUtils {
 
     private static String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
+
+        if (url == null) {
+            return jsonResponse;
+        }
+
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
+
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
             urlConnection.setReadTimeout(10000/* time in milliseconds*/);
             urlConnection.setConnectTimeout(15000/* time in milliseconds*/);
+            urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
             if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
-                Log.e(LOG_TAG, "There was an error..." + urlConnection.getResponseCode());
+                Log.e(LOG_TAG, "Error Response Code: " + urlConnection.getResponseCode());
             }
+
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the searched books from JSON results", e);
+            Log.e(LOG_TAG, "Problem retrieving the searched books", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -93,10 +100,12 @@ public final class QueryUtils {
         return jsonResponse;
     }
 
+
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream,
+                    Charset.forName("UTF-8"));
 
             BufferedReader reader = new BufferedReader(inputStreamReader);
             String line = reader.readLine();

@@ -124,7 +124,7 @@ public class BookActivity extends AppCompatActivity {
         @Override
         protected List<Books> doInBackground(String... urls) {
 
-            URL url = createUrl(GOOGLE_BOOKS_URL);
+            URL url = createUrl(urls[0]);
 
             //Perform HTTP request to the URL and receives a JSON response back.
             String jsonResponse = "";
@@ -145,7 +145,7 @@ public class BookActivity extends AppCompatActivity {
          */
         @Override
         protected void onPostExecute(List<Books> books) {
-            if (books == null){
+            if (books == null) {
 
                 return;
             }
@@ -154,19 +154,28 @@ public class BookActivity extends AppCompatActivity {
         }
 
         private URL createUrl(String stringUrl) {
-            URL url;
+            URL url = null;
 
             try {
                 url = new URL(stringUrl);
             } catch (MalformedURLException exception) {
-                return null;
+                Log.e(LOG_TAG, "Problem building the URL ");
             }
 
             return url;
         }
 
+        /*
+         * Make an HTTP request to the given URL and return a String as the response.
+         */
         private String makeHttpRequest(URL url) throws IOException {
             String jsonResponse = "";
+
+            //If response is null than return early.
+            if (url == null) {
+                return jsonResponse;
+            }
+
             HttpURLConnection urlConnection = null;
             InputStream inputStream = null;
 
@@ -177,6 +186,13 @@ public class BookActivity extends AppCompatActivity {
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
 
+                //If the connection request was successful (response code 200)
+                if (urlConnection.getResponseCode() == 200) {
+                    inputStream = urlConnection.getInputStream();
+                    jsonResponse = readFromStream(inputStream);
+                } else {
+                    Log.e(LOG_TAG, "Error Response Code: " + urlConnection.getResponseCode());
+                }
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Problem retrieving the searched books", e);
