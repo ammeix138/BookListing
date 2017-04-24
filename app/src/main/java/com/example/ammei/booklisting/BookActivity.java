@@ -50,8 +50,10 @@ public class BookActivity extends AppCompatActivity {
      */
     private TextView mEmptyStateTextView;
 
+    private EditText searchTerm;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
@@ -70,18 +72,22 @@ public class BookActivity extends AppCompatActivity {
         // List that will be populated with the books searched
         bookListView.setAdapter(mAdapter);
 
+
         final Button searchButton = (Button) findViewById(R.id.button);
-        searchButton.getText().toString();
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
 
         // Item click listener on the ListView, send an intent to a web browser
         // to open a website with more information about the searched book.
         bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-                EditText searchTerm = (EditText) findViewById(R.id.search_editText);
-                DownloadTask task = new DownloadTask();
-                task.execute(GOOGLE_BOOKS_URL + searchTerm);
 
 
                 // Find the current earthquake that was clicked on
@@ -93,13 +99,13 @@ public class BookActivity extends AppCompatActivity {
                 }
                 // Create a new intent to view the book URI
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, bookUri);
+
                 // Send the intent to launch a new activity
                 startActivity(websiteIntent);
             }
         });
 
     }
-
 
     private void updateUi(List<Books> books) {
         //Display the Book Title within the UI
@@ -136,6 +142,7 @@ public class BookActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Books> books) {
             if (books == null){
+
                 return;
             }
 
@@ -161,12 +168,11 @@ public class BookActivity extends AppCompatActivity {
 
             try {
                 urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
                 urlConnection.setReadTimeout(10000/* time in milliseconds*/);
                 urlConnection.setConnectTimeout(15000/* time in milliseconds*/);
+                urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
-                inputStream = urlConnection.getInputStream();
-                jsonResponse = readFromStream(inputStream);
+
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Problem retrieving the searched books", e);
@@ -215,11 +221,18 @@ public class BookActivity extends AppCompatActivity {
             try {
 
                 JSONObject baseJsonResponse = new JSONObject(googleBookJSON);
-                JSONArray bookArray = baseJsonResponse.getJSONArray("items");
+                int bookArray = baseJsonResponse.optInt("totalItems");
+                if (!(bookArray != 0)) {
+                    Log.i(LOG_TAG, "No Items Found :(");
+                    return null;
+
+                }
+
+                JSONArray items = baseJsonResponse.optJSONArray("items");
 
 
-                for (int i = 0; i < bookArray.length(); i++) {
-                    JSONObject currentBook = bookArray.getJSONObject(i);
+                for (int i = 0; i < items.length(); i++) {
+                    JSONObject currentBook = items.getJSONObject(i);
                     JSONObject volumeInfo = currentBook.getJSONObject("volumeInfo");
 
                     //Extract out the title, author, and description
