@@ -58,6 +58,7 @@ public final class QueryUtils {
             Log.e(LOG_TAG, "There was an issue retrieving the book search");
         }
 
+
         return url;
     }
 
