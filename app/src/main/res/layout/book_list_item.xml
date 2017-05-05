@@ -6,57 +6,49 @@
     android:id="@+id/display_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#607D8B"
     android:orientation="vertical"
     tools:context="com.example.ammei.booklisting.BookActivity">
 
-
-
-    <RelativeLayout
+    <TextView
+        android:id="@+id/author"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:fontFamily="sans-serif"
+        android:maxLines="1"
+        android:textColor="#FF6D00"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        tools:text="Author" />
 
-        <TextView
-            android:id="@+id/bookTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/author"
-            android:layout_alignParentTop="true"
-            android:layout_alignStart="@+id/author"
-            android:layout_marginTop="22dp"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif"
-            android:gravity="center_horizontal"
-            android:textColor="#000000"
-            android:textSize="26dp"
-            tools:text="Title" />
-
-        <TextView
-            android:id="@+id/author"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/bookTitle"
-            android:layout_marginLeft="25dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="4dp"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif"
-            android:gravity="center_horizontal"
-            android:textColor="#000000"
-            android:textSize="20dp"
-            tools:text="Author" />
-
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/bookTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
+        android:textColor="#000000"
+        android:textSize="16dp"
+        tools:text="Title" />
 
     <TextView
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="22dp"
+        android:layout_margin="8dp"
         android:fontFamily="sans-serif"
-        android:textColor="#000000"
-        android:textSize="18dp"
+        android:maxLines="3"
+        android:textColor="#CFD8DC"
+        android:textSize="16dp"
         tools:text="Description" />
+
+    <TextView
+        android:id="@+id/empty_view2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAppearance="?android:textAppearanceMedium" />
 
 </LinearLayout>

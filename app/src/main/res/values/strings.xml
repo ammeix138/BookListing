@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">BookSearch</string>
     <string name="search_app_home_screen">Search</string>
+
+    <string name="no_books_found">No Results Searched</string>
+    <string name="Home_Search_Instructions">Please enter a search to begin!</string>
+    <string name="no_search_results">No Results Found</string>
+    <string name="no_internet_connection">Oops, Sorry! No Internet Connection</string>
 </resources>

@@ -7,11 +7,11 @@ package com.example.ammei.booklisting;
 public class Books {
 
 
-    /*Author of the book*/
-    private String mAuthor;
-
     /*Title of the book*/
     private String mTitle;
+
+    /*Author of the book*/
+    private String mAuthor;
 
     /*Publisher of the book*/
     private String mDescription;
@@ -22,18 +22,11 @@ public class Books {
 
 
     public Books(String author, String title, String description, String url) {
-        mAuthor = author;
         mTitle = title;
+        mAuthor = author;
         mDescription = description;
         mUrl = url;
 
-    }
-
-    /**
-     * Returns the Author of the book
-     */
-    public String getAuthor() {
-        return mAuthor;
     }
 
     /**
@@ -43,6 +36,14 @@ public class Books {
         return mTitle;
     }
 
+
+    /**
+     * Returns the Author of the book
+     */
+    public String getAuthor() {
+        return mAuthor;
+    }
+
     /*
      * Return the name of the publisher for the book
      */
@@ -50,6 +51,9 @@ public class Books {
         return mDescription;
     }
 
+    /*
+     * Returns a URL object
+     */
     public String getURL(){
         return mUrl;
     }

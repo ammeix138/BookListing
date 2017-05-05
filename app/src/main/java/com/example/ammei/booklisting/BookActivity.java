@@ -1,6 +1,9 @@
 package com.example.ammei.booklisting;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -13,7 +16,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -30,6 +35,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.view.View.GONE;
 
 public class BookActivity extends AppCompatActivity {
 
@@ -48,19 +55,31 @@ public class BookActivity extends AppCompatActivity {
     /**
      * TextView that is displayed when the list is empty and no items have been searched
      */
-    private TextView mEmptyStateTextView;
+
 
     private EditText searchTerm;
+    /**
+     * TextView that is displayed when the list is empty and no items have been searched
+     */
+    private TextView mEmptyStateTextView;
+    private ProgressBar mProgressBar;
+    private ImageView mBookImage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
+        mBookImage = (ImageView) findViewById(R.id.imageView);
+        mBookImage.setVisibility(View.VISIBLE);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(GONE);
+
         // Find a reference to the {@link ListView} in the layout
         final ListView bookListView = (ListView) findViewById(R.id.list_item);
 
-        mEmptyStateTextView = (TextView) findViewById(R.id.emptyView);
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         bookListView.setEmptyView(mEmptyStateTextView);
 
         // Create a new adapter that takes an empty list of books as input
@@ -76,6 +95,14 @@ public class BookActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                mProgressBar.setVisibility(View.VISIBLE);
+                if (searchTermView == null) {
+                    mProgressBar.setVisibility(GONE);
+                } else {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                }
+
 
                 String searchTerm = searchTermView.getText().toString();
                 String searchUrl = GOOGLE_BOOKS_URL + searchTerm;
@@ -109,6 +136,22 @@ public class BookActivity extends AppCompatActivity {
             }
         });
 
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            DownloadTask task = new DownloadTask();
+            task.execute(GOOGLE_BOOKS_URL);
+        } else {
+            View progressBar = findViewById(R.id.progressBar);
+            progressBar.setVisibility(GONE);
+
+            mEmptyStateTextView.setText(R.string.no_internet_connection);
+        }
+
+
     }
 
     private void updateUi(List<Books> books) {
@@ -125,6 +168,10 @@ public class BookActivity extends AppCompatActivity {
         protected List<Books> doInBackground(String... urls) {
 
             URL url = createUrl(urls[0]);
+
+            if (urls.length < 1 || urls == null) {
+                return null;
+            }
 
             //Perform HTTP request to the URL and receives a JSON response back.
             String jsonResponse = "";
@@ -145,6 +192,10 @@ public class BookActivity extends AppCompatActivity {
          */
         @Override
         protected void onPostExecute(List<Books> books) {
+
+            View loadingBar = findViewById(R.id.progressBar);
+            loadingBar.setVisibility(GONE);
+
             if (books == null) {
 
                 return;
