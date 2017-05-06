@@ -22,8 +22,7 @@ public class BookAdapter extends ArrayAdapter<Books> {
     }
 
     /**
-     * Returns a list item view that displays information about the earthquake at the given position
-     * in the list of earthquakes.
+     * Returns a list item view that displays information about the searched book.
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

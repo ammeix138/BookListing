@@ -9,7 +9,7 @@
         android:allowBackup="true"
         android:configChanges="orientation|keyboardHidden"
         android:icon="@mipmap/ic_launcher"
-        android:label="BookListing"
+        android:label="BookFinder"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".SplashActivity">
@@ -19,7 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BookActivity"></activity>
+        <activity
+            android:name=".BookActivity"
+            android:label="Google Book Search">
+
+        </activity>
     </application>
 
 </manifest>

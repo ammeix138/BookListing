@@ -16,9 +16,10 @@ public class Books {
     /*Publisher of the book*/
     private String mDescription;
 
-    /** Website URL of the earthquake */
+    /**
+     * Website URL of the earthquake
+     */
     private String mUrl;
-
 
 
     public Books(String author, String title, String description, String url) {
@@ -54,7 +55,7 @@ public class Books {
     /*
      * Returns a URL object
      */
-    public String getURL(){
+    public String getURL() {
         return mUrl;
     }
 }
