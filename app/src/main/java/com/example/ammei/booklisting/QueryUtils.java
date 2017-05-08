@@ -140,24 +140,39 @@ public final class QueryUtils {
                 JSONObject currentBook = bookArray.getJSONObject(i);
                 JSONObject volumeInfo = currentBook.getJSONObject("volumeInfo");
 
-                String title = volumeInfo.getString("title");
-                String authors = "";
-                JSONArray authorsAry = null;
-                //Checks to ensure there is an author value prior to returning request
-                if (volumeInfo.has("authors")) {
-                    for (int j = 0; j < authorsAry.length(); j++) {
-                        authors += authorsAry.getString(j) + ";";
+                //Extract out the title, author, and description
+                String title; //volumeInfo.getString("title");
+                //Checks to ensure a book Title is available
+                if (volumeInfo.has("title")) {
+                    title = volumeInfo.getString("title");
+                } else {
+                    title = "Title Not Available";
+                }
 
-                        //Return the String w/out ";" in the statement
-                        authors = authors.substring(0, authors.length() - 2);
+                String authors = ""; //volumeInfo.getString("authors");
+                JSONArray authorAry = null;
+                //Checks to ensure the book has an author.
+                //If not author is available will display as "Not Available".
+                if (volumeInfo.has("authors")) {
+                    authorAry = volumeInfo.getJSONArray("authors");
+                    for (int j = 0; j < authorAry.length(); j++) {
+                        authors += authorAry.getString(j) + ", ";
                     }
                 } else {
-                    authorsAry.put(0, "No Authors Available");
+                    authors = "Author Not Available";
                 }
-                String description = volumeInfo.getString("description");
+                String description;
+                //Checks to ensure the book has a description available if not, will display
+                //"Not Available".
+                if (volumeInfo.has("description")) {
+                    description = volumeInfo.getString("description");
+                } else {
+                    description = "Description Not Available";
+                }
                 // Extract the value for the key called "url"
-                String url = volumeInfo.getString("url");
+                String url = volumeInfo.getString("previewLink");
 
+                //Create a new object
                 Book booksList = new Book(title, authors, description, url);
                 books.add(booksList);
             }

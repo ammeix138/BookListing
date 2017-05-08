@@ -64,7 +64,6 @@ public class BookActivity extends AppCompatActivity {
     private TextView mEmptyStateTextView;
     private ProgressBar mProgressBar;
     private ImageView mBookImage;
-    private ListView mBook;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -80,6 +79,7 @@ public class BookActivity extends AppCompatActivity {
         // Find a reference to the {@link ListView} in the layout
         final ListView bookListView = (ListView) findViewById(R.id.list_item);
 
+        //EmptyView to be displayed when the list is empty
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         bookListView.setEmptyView(mEmptyStateTextView);
 
@@ -93,24 +93,6 @@ public class BookActivity extends AppCompatActivity {
         final EditText searchTermView = (EditText) findViewById(R.id.search_editText);
         final Button searchButton = (Button) findViewById(R.id.button);
 
-        //Checks the users connectivity during and before use.
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if (networkInfo != null && networkInfo.isConnected()) {
-            DownloadTask task = new DownloadTask();
-            task.execute(GOOGLE_BOOKS_URL);
-        } else {
-            View progressBar = findViewById(R.id.progressBar);
-            progressBar.setVisibility(GONE);
-
-            //If no connection is established, error message will be displayed to the user
-            mEmptyStateTextView.setText(R.string.no_internet_connection);
-        }
-
-
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,15 +104,30 @@ public class BookActivity extends AppCompatActivity {
                     mProgressBar.setVisibility(View.VISIBLE);
                 }
 
-
+                mAdapter.clear();
                 String searchTerm = searchTermView.getText().toString();
                 String searchUrl = GOOGLE_BOOKS_URL + searchTerm;
 
+
+                //Checks the users connectivity when search button is clicked.
+                ConnectivityManager connMgr = (ConnectivityManager)
+                        getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    DownloadTask task = new DownloadTask();
+                    task.execute(GOOGLE_BOOKS_URL);
+                } else {
+                    View progressBar = findViewById(R.id.progressBar);
+                    progressBar.setVisibility(GONE);
+
+                    //If no connection is established, error message will be displayed to the user
+                    mEmptyStateTextView.setText(R.string.no_internet_connection);
+                }
+
                 DownloadTask task = new DownloadTask();
                 task.execute(searchUrl);
-
-
-
             }
         });
 
@@ -146,6 +143,7 @@ public class BookActivity extends AppCompatActivity {
                 Uri bookUri = null;
                 if (currentBook != null) {
                     bookUri = Uri.parse(currentBook.getURL());
+
                 }
                 // Create a new intent to view the book URI
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, bookUri);
@@ -310,8 +308,13 @@ public class BookActivity extends AppCompatActivity {
                     JSONObject volumeInfo = currentBook.getJSONObject("volumeInfo");
 
                     //Extract out the title, author, and description
-                    String title = volumeInfo.getString("title");
+                    String title; //volumeInfo.getString("title");
                     //Checks to ensure a book Title is available
+                    if (volumeInfo.has("title")) {
+                        title = volumeInfo.getString("title");
+                    } else {
+                        title = "Title Not Available";
+                    }
 
                     String authors = ""; //volumeInfo.getString("authors");
                     JSONArray authorAry = null;
@@ -323,7 +326,7 @@ public class BookActivity extends AppCompatActivity {
                             authors += authorAry.getString(j) + ", ";
                         }
                     } else {
-                        authors = authors.substring(0, authorAry.length());
+                        authors = "Author Not Available";
                     }
                     String description;
                     //Checks to ensure the book has a description available if not, will display
@@ -331,7 +334,7 @@ public class BookActivity extends AppCompatActivity {
                     if (volumeInfo.has("description")) {
                         description = volumeInfo.getString("description");
                     } else {
-                        description = "Not Available";
+                        description = "Description Not Available";
                     }
                     // Extract the value for the key called "url"
                     String url = volumeInfo.getString("previewLink");

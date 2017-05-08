@@ -52,6 +52,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
 
         return listItemView;
+
     }
 
 }
