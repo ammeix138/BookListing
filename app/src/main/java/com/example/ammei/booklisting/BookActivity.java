@@ -64,6 +64,7 @@ public class BookActivity extends AppCompatActivity {
     private TextView mEmptyStateTextView;
     private ProgressBar mProgressBar;
     private ImageView mBookImage;
+    private ListView mBook;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -92,6 +93,24 @@ public class BookActivity extends AppCompatActivity {
         final EditText searchTermView = (EditText) findViewById(R.id.search_editText);
         final Button searchButton = (Button) findViewById(R.id.button);
 
+        //Checks the users connectivity during and before use.
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            DownloadTask task = new DownloadTask();
+            task.execute(GOOGLE_BOOKS_URL);
+        } else {
+            View progressBar = findViewById(R.id.progressBar);
+            progressBar.setVisibility(GONE);
+
+            //If no connection is established, error message will be displayed to the user
+            mEmptyStateTextView.setText(R.string.no_internet_connection);
+        }
+
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,6 +130,7 @@ public class BookActivity extends AppCompatActivity {
                 task.execute(searchUrl);
 
 
+
             }
         });
 
@@ -119,7 +139,6 @@ public class BookActivity extends AppCompatActivity {
         bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
 
                 // Find the current earthquake that was clicked on
                 Books currentBook = mAdapter.getItem(position);
@@ -135,23 +154,6 @@ public class BookActivity extends AppCompatActivity {
                 startActivity(websiteIntent);
             }
         });
-
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if (networkInfo != null && networkInfo.isConnected()) {
-            DownloadTask task = new DownloadTask();
-            task.execute(GOOGLE_BOOKS_URL);
-        } else {
-            View progressBar = findViewById(R.id.progressBar);
-            progressBar.setVisibility(GONE);
-
-            mEmptyStateTextView.setText(R.string.no_internet_connection);
-        }
-
-
     }
 
     private void updateUi(List<Books> books) {
@@ -197,10 +199,11 @@ public class BookActivity extends AppCompatActivity {
             loadingBar.setVisibility(GONE);
 
             if (books == null) {
-
                 return;
             }
 
+
+            mAdapter.clear();
             updateUi(books);
         }
 
@@ -308,7 +311,23 @@ public class BookActivity extends AppCompatActivity {
 
                     //Extract out the title, author, and description
                     String title = volumeInfo.getString("title");
-                    String authors = volumeInfo.getString("authors");
+                    //Checks to ensure a book Title is available
+
+                    String authors = "";
+                    JSONArray authorsAry = null;
+                    //Checks to ensure there is an author value prior to returning request
+                    if (volumeInfo.has("authors")) {
+                        authorsAry = volumeInfo.getJSONArray("authors");
+                        for (int j = 0; j < authorsAry.length(); j++) {
+                            authors += authorsAry.getString(j) + ";";
+
+                            //Return the String w/out ";" in the statement
+                            authors = authors.substring(0, authors.length() - 2);
+                        }
+                    } else {
+                        authorsAry.put(0, "No Authors Available");
+
+                    }
                     String description = volumeInfo.getString("description");
                     // Extract the value for the key called "url"
                     String url = volumeInfo.getString("previewLink");
@@ -327,7 +346,6 @@ public class BookActivity extends AppCompatActivity {
             // Return the list of the book searched
             return books;
         }
-
     }
 }
 

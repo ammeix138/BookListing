@@ -6,4 +6,5 @@
     <string name="Home_Search_Instructions">Please enter a search to begin!</string>
     <string name="no_search_results">No Results Found</string>
     <string name="no_internet_connection">Oops, Sorry! No Internet Connection</string>
+    <string name="authors_not_available">Authors Name: N/A</string>
 </resources>

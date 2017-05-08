@@ -141,7 +141,19 @@ public final class QueryUtils {
                 JSONObject volumeInfo = currentBook.getJSONObject("volumeInfo");
 
                 String title = volumeInfo.getString("title");
-                String authors = volumeInfo.getString("authors");
+                String authors = "";
+                JSONArray authorsAry = null;
+                //Checks to ensure there is an author value prior to returning request
+                if (volumeInfo.has("authors")) {
+                    for (int j = 0; j < authorsAry.length(); j++) {
+                        authors += authorsAry.getString(j) + ";";
+
+                        //Return the String w/out ";" in the statement
+                        authors = authors.substring(0, authors.length() - 2);
+                    }
+                } else {
+                    authorsAry.put(0, "No Authors Available");
+                }
                 String description = volumeInfo.getString("description");
                 // Extract the value for the key called "url"
                 String url = volumeInfo.getString("url");
