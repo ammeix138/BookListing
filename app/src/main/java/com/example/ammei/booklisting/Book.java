@@ -4,7 +4,7 @@ package com.example.ammei.booklisting;
  * Created by ammei on 12/3/2016.
  */
 
-public class Books {
+public class Book {
 
 
     /*Title of the book*/
@@ -22,7 +22,7 @@ public class Books {
     private String mUrl;
 
 
-    public Books(String author, String title, String description, String url) {
+    public Book(String author, String title, String description, String url) {
         mTitle = title;
         mAuthor = author;
         mDescription = description;

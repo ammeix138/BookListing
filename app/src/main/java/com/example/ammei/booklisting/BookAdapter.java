@@ -13,11 +13,11 @@ import java.util.List;
  * Created by ammei on 12/3/2016.
  */
 
-public class BookAdapter extends ArrayAdapter<Books> {
+public class BookAdapter extends ArrayAdapter<Book> {
 
     private static final String LOG_TAG = BookAdapter.class.getSimpleName();
 
-    public BookAdapter(Context context, List<Books> books) {
+    public BookAdapter(Context context, List<Book> books) {
         super(context, 0, books);
     }
 
@@ -35,7 +35,7 @@ public class BookAdapter extends ArrayAdapter<Books> {
         }
 
         //Get the current book at the given position
-        Books currentBook = getItem(position);
+        Book currentBook = getItem(position);
 
         //Get the TextView with the ID author
         TextView authorView = (TextView) listItemView.findViewById(R.id.author);

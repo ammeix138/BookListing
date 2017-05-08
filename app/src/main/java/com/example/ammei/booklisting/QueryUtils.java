@@ -34,7 +34,7 @@ public final class QueryUtils {
     private QueryUtils() {
     }
 
-    public static List<Books> extractBookList(String requestURL) {
+    public static List<Book> extractBookList(String requestURL) {
         //Create URL object
         URL url = createURL(requestURL);
 
@@ -118,16 +118,16 @@ public final class QueryUtils {
     }
 
     /**
-     * Return a list of {@link Books} objects that has been built up from
+     * Return a list of {@link Book} objects that has been built up from
      * parsing a JSON response.
      */
-    private static List<Books> extractFeatureFromJson(String googleBookJSON) {
+    private static List<Book> extractFeatureFromJson(String googleBookJSON) {
 
         if (TextUtils.isEmpty(googleBookJSON)) {
             return null;
         }
 
-        List<Books> books = new ArrayList<>();
+        List<Book> books = new ArrayList<>();
 
         try {
 
@@ -158,14 +158,14 @@ public final class QueryUtils {
                 // Extract the value for the key called "url"
                 String url = volumeInfo.getString("url");
 
-                Books booksList = new Books(title, authors, description, url);
+                Book booksList = new Book(title, authors, description, url);
                 books.add(booksList);
             }
 
         } catch (JSONException e) {
             // Print a log message
             // with the message from the exception.
-            Log.e("QueryUtils", "Problem parsing the Google Books JSON results", e);
+            Log.e("QueryUtils", "Problem parsing the Google Book JSON results", e);
         }
 
         // Return the list of the book searched

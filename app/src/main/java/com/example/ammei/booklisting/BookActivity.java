@@ -43,7 +43,7 @@ public class BookActivity extends AppCompatActivity {
     private static final String LOG_TAG = BookActivity.class.getName();
 
     /**
-     * URL to obtain book data from Google Books website
+     * URL to obtain book data from Google Book website
      */
     private static final String GOOGLE_BOOKS_URL =
             "https://www.googleapis.com/books/v1/volumes?q=";
@@ -84,7 +84,7 @@ public class BookActivity extends AppCompatActivity {
         bookListView.setEmptyView(mEmptyStateTextView);
 
         // Create a new adapter that takes an empty list of books as input
-        mAdapter = new BookAdapter(this, new ArrayList<Books>());
+        mAdapter = new BookAdapter(this, new ArrayList<Book>());
 
         // List that will be populated with the books searched
         bookListView.setAdapter(mAdapter);
@@ -141,7 +141,7 @@ public class BookActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
                 // Find the current earthquake that was clicked on
-                Books currentBook = mAdapter.getItem(position);
+                Book currentBook = mAdapter.getItem(position);
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
                 Uri bookUri = null;
                 if (currentBook != null) {
@@ -156,18 +156,18 @@ public class BookActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUi(List<Books> books) {
+    private void updateUi(List<Book> books) {
         //Display the Book Title within the UI
         mAdapter.clear();
         mAdapter.addAll(books);
         mAdapter.notifyDataSetChanged();
     }
 
-    private class DownloadTask extends AsyncTask<String, Void, List<Books>> {
+    private class DownloadTask extends AsyncTask<String, Void, List<Book>> {
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        protected List<Books> doInBackground(String... urls) {
+        protected List<Book> doInBackground(String... urls) {
 
             URL url = createUrl(urls[0]);
 
@@ -184,7 +184,7 @@ public class BookActivity extends AppCompatActivity {
                 Log.e(LOG_TAG, "There was a problem retrieving the search query", e);
             }
 
-            List<Books> books = extractFeatureFromJson(jsonResponse);
+            List<Book> books = extractFeatureFromJson(jsonResponse);
 
             return books;
         }
@@ -193,7 +193,7 @@ public class BookActivity extends AppCompatActivity {
          *Updates the screen with a new list of searched books
          */
         @Override
-        protected void onPostExecute(List<Books> books) {
+        protected void onPostExecute(List<Book> books) {
 
             View loadingBar = findViewById(R.id.progressBar);
             loadingBar.setVisibility(GONE);
@@ -280,17 +280,17 @@ public class BookActivity extends AppCompatActivity {
         }
 
         /**
-         * Return a list of {@link Books} objects that has been built up from
+         * Return a list of {@link Book} objects that has been built up from
          * parsing a JSON response.
          */
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-        private List<Books> extractFeatureFromJson(String googleBookJSON) {
+        private List<Book> extractFeatureFromJson(String googleBookJSON) {
 
             if (TextUtils.isEmpty(googleBookJSON)) {
                 return null;
             }
 
-            List<Books> books = new ArrayList<>();
+            List<Book> books = new ArrayList<>();
 
             try {
 
@@ -313,34 +313,38 @@ public class BookActivity extends AppCompatActivity {
                     String title = volumeInfo.getString("title");
                     //Checks to ensure a book Title is available
 
-                    String authors = "";
-                    JSONArray authorsAry = null;
-                    //Checks to ensure there is an author value prior to returning request
+                    String authors = ""; //volumeInfo.getString("authors");
+                    JSONArray authorAry = null;
+                    //Checks to ensure the book has an author.
+                    //If not author is available will display as "Not Available".
                     if (volumeInfo.has("authors")) {
-                        authorsAry = volumeInfo.getJSONArray("authors");
-                        for (int j = 0; j < authorsAry.length(); j++) {
-                            authors += authorsAry.getString(j) + ";";
-
-                            //Return the String w/out ";" in the statement
-                            authors = authors.substring(0, authors.length() - 2);
+                        authorAry = volumeInfo.getJSONArray("authors");
+                        for (int j = 0; j < authorAry.length(); j++) {
+                            authors += authorAry.getString(j) + ", ";
                         }
                     } else {
-                        authorsAry.put(0, "No Authors Available");
-
+                        authors = authors.substring(0, authorAry.length());
                     }
-                    String description = volumeInfo.getString("description");
+                    String description;
+                    //Checks to ensure the book has a description available if not, will display
+                    //"Not Available".
+                    if (volumeInfo.has("description")) {
+                        description = volumeInfo.getString("description");
+                    } else {
+                        description = "Not Available";
+                    }
                     // Extract the value for the key called "url"
                     String url = volumeInfo.getString("previewLink");
 
                     //Create a new object
-                    Books booksList = new Books(title, authors, description, url);
+                    Book booksList = new Book(title, authors, description, url);
                     books.add(booksList);
                 }
 
             } catch (JSONException e) {
                 // Print a log message
                 // with the message from the exception.
-                Log.e(LOG_TAG, "Problem parsing the Google Books JSON results", e);
+                Log.e(LOG_TAG, "Problem parsing the Google Book JSON results", e);
             }
 
             // Return the list of the book searched
