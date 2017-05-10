@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/display_list"
     android:layout_width="match_parent"
@@ -18,7 +17,7 @@
         android:fontFamily="sans-serif"
         android:maxLines="1"
         android:textColor="#FF6D00"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textStyle="bold"
         tools:text="Author" />
 
@@ -31,7 +30,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="sans-serif"
         android:textColor="#000000"
-        android:textSize="16dp"
+        android:textSize="16sp"
         tools:text="Title" />
 
     <TextView
@@ -44,7 +43,7 @@
         android:fontFamily="sans-serif"
         android:maxLines="3"
         android:textColor="#CFD8DC"
-        android:textSize="16dp"
+        android:textSize="16sp"
         tools:text="Description" />
 
 </LinearLayout>

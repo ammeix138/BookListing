@@ -13,7 +13,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="8dp"
-        android:hint="Search..."
+        android:hint="@string/search_edittext"
         android:imeOptions="flagNoExtractUi"
         android:textColor="#FFFFFF"
         android:textColorHighlight="#FF6D00"
@@ -27,7 +27,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="4dp"
-        android:text="Search" />
+        android:text="@string/search_button" />
 
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/list_item"
@@ -71,7 +71,7 @@
             android:gravity="center"
             android:text="@string/Home_Search_Instructions"
             android:textColor="#FFFFFF"
-            android:textSize="18dp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 

@@ -3,8 +3,27 @@
     <string name="search_app_home_screen">Search</string>
 
     <string name="no_books_found">No Results Searched</string>
+
+    <!--Displays to the user the instructions on how to begin a search-->
     <string name="Home_Search_Instructions">Please enter a search to begin!</string>
+
+    <!--Displays to the user when the query cannot produce results-->
     <string name="no_search_results">No Results Found</string>
+
+    <!--Displays to the user when there is no internet connection found-->
     <string name="no_internet_connection">Oops, Sorry! No Internet Connection</string>
-    <string name="authors_not_available">Authors Name: N/A</string>
+
+    <!--Texts to be displayed to the user when a field of information is not available-->
+    <string name="title_not_available">Title Not Available</string>
+    <string name="author_not_available">Author Not Available</string>
+    <string name="description_not_available">Description Not Available</string>
+
+    <!--Displays the "Welcome" text to the user upon opening the app-->
+    <string name="splash_screen_text">Welcome to Book Finder</string>
+
+    <!--Displays the search "Hint" to the user within the EditText bar-->
+    <string name="search_edittext">Search...</string>
+
+    <!--Displays the "Search" text on the search button-->
+    <string name="search_button">Search</string>
 </resources>

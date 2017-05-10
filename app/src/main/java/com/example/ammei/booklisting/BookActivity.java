@@ -52,25 +52,19 @@ public class BookActivity extends AppCompatActivity {
      * Adapter for the list of books
      */
     private BookAdapter mAdapter;
-    /**
-     * TextView that is displayed when the list is empty and no items have been searched
-     */
 
-
-    private EditText searchTerm;
     /**
      * TextView that is displayed when the list is empty and no items have been searched
      */
     private TextView mEmptyStateTextView;
     private ProgressBar mProgressBar;
-    private ImageView mBookImage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
-        mBookImage = (ImageView) findViewById(R.id.imageView);
+        ImageView mBookImage = (ImageView) findViewById(R.id.imageView);
         mBookImage.setVisibility(View.VISIBLE);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -105,6 +99,7 @@ public class BookActivity extends AppCompatActivity {
                 }
 
                 mAdapter.clear();
+                assert searchTermView != null;
                 String searchTerm = searchTermView.getText().toString();
                 String searchUrl = GOOGLE_BOOKS_URL + searchTerm;
 
@@ -117,7 +112,7 @@ public class BookActivity extends AppCompatActivity {
 
                 if (networkInfo != null && networkInfo.isConnected()) {
                     DownloadTask task = new DownloadTask();
-                    task.execute(GOOGLE_BOOKS_URL);
+                    task.execute(searchUrl);
                 } else {
                     View progressBar = findViewById(R.id.progressBar);
                     progressBar.setVisibility(GONE);
@@ -125,9 +120,6 @@ public class BookActivity extends AppCompatActivity {
                     //If no connection is established, error message will be displayed to the user
                     mEmptyStateTextView.setText(R.string.no_internet_connection);
                 }
-
-                DownloadTask task = new DownloadTask();
-                task.execute(searchUrl);
             }
         });
 
@@ -169,7 +161,7 @@ public class BookActivity extends AppCompatActivity {
 
             URL url = createUrl(urls[0]);
 
-            if (urls.length < 1 || urls == null) {
+            if (urls.length < 1) {
                 return null;
             }
 
@@ -182,9 +174,7 @@ public class BookActivity extends AppCompatActivity {
                 Log.e(LOG_TAG, "There was a problem retrieving the search query", e);
             }
 
-            List<Book> books = extractFeatureFromJson(jsonResponse);
-
-            return books;
+            return extractFeatureFromJson(jsonResponse);
         }
 
         /*
@@ -294,7 +284,7 @@ public class BookActivity extends AppCompatActivity {
 
                 JSONObject baseJsonResponse = new JSONObject(googleBookJSON);
                 int bookArray = baseJsonResponse.optInt("totalItems");
-                if (!(bookArray != 0)) {
+                if (bookArray == 0) {
                     Log.i(LOG_TAG, "No Items Found :(");
                     return null;
 
@@ -313,7 +303,7 @@ public class BookActivity extends AppCompatActivity {
                     if (volumeInfo.has("title")) {
                         title = volumeInfo.getString("title");
                     } else {
-                        title = "Title Not Available";
+                        title = getString(R.string.title_not_available);
                     }
 
                     String authors = ""; //volumeInfo.getString("authors");
@@ -326,7 +316,7 @@ public class BookActivity extends AppCompatActivity {
                             authors += authorAry.getString(j) + ", ";
                         }
                     } else {
-                        authors = "Author Not Available";
+                        authors = getString(R.string.author_not_available);
                     }
                     String description;
                     //Checks to ensure the book has a description available if not, will display
@@ -334,7 +324,7 @@ public class BookActivity extends AppCompatActivity {
                     if (volumeInfo.has("description")) {
                         description = volumeInfo.getString("description");
                     } else {
-                        description = "Description Not Available";
+                        description = getString(R.string.description_not_available);
                     }
                     // Extract the value for the key called "url"
                     String url = volumeInfo.getString("previewLink");
